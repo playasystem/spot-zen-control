@@ -244,63 +244,88 @@ export default function Dashboard() {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
-            {/* Autos */}
-            <div>
-              <h3 className="font-semibold mb-3 flex items-center gap-2">
-                <Car className="w-4 h-4" />
-                Autos (12 lugares)
-              </h3>
-              <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-12 gap-2">
-                {lugares
-                  .filter(l => l.tipo === 'auto')
-                  .map(lugar => (
-                    <div
-                      key={lugar.id}
-                      className={`aspect-square rounded-lg ${getEstadoColor(lugar.estado)} flex items-center justify-center text-white font-bold text-sm shadow-sm hover:shadow-md transition-shadow cursor-pointer`}
-                      title={`Lugar ${lugar.numero} - ${lugar.estado}`}
-                    >
-                      {lugar.numero}
+            {lugares.length === 0 ? (
+              <div className="text-center py-12">
+                <ParkingSquare className="w-16 h-16 mx-auto text-muted-foreground mb-4" />
+                <h3 className="text-lg font-semibold mb-2">No hay lugares configurados</h3>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Parece que la base de datos no tiene lugares de estacionamiento creados.
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  Verifica que las migraciones de Supabase se hayan ejecutado correctamente.
+                </p>
+              </div>
+            ) : (
+              <>
+                {/* Autos */}
+                <div>
+                  <h3 className="font-semibold mb-3 flex items-center gap-2">
+                    <Car className="w-4 h-4" />
+                    Autos ({lugares.filter(l => l.tipo === 'auto').length} lugares)
+                  </h3>
+                  {lugares.filter(l => l.tipo === 'auto').length > 0 ? (
+                    <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-12 gap-2">
+                      {lugares
+                        .filter(l => l.tipo === 'auto')
+                        .sort((a, b) => a.numero - b.numero)
+                        .map(lugar => (
+                          <div
+                            key={lugar.id}
+                            className={`aspect-square rounded-lg ${getEstadoColor(lugar.estado)} flex items-center justify-center text-white font-bold text-sm shadow-sm hover:shadow-md transition-shadow cursor-pointer`}
+                            title={`Lugar ${lugar.numero} - ${lugar.estado}`}
+                          >
+                            {lugar.numero}
+                          </div>
+                        ))}
                     </div>
-                  ))}
-              </div>
-            </div>
+                  ) : (
+                    <p className="text-sm text-muted-foreground">No hay lugares para autos configurados</p>
+                  )}
+                </div>
 
-            {/* Motos */}
-            <div>
-              <h3 className="font-semibold mb-3 flex items-center gap-2">
-                <ParkingSquare className="w-4 h-4" />
-                Motos (14 lugares)
-              </h3>
-              <div className="grid grid-cols-7 sm:grid-cols-7 md:grid-cols-14 gap-2">
-                {lugares
-                  .filter(l => l.tipo === 'moto')
-                  .map(lugar => (
-                    <div
-                      key={lugar.id}
-                      className={`aspect-square rounded-lg ${getEstadoColor(lugar.estado)} flex items-center justify-center text-white font-bold text-xs shadow-sm hover:shadow-md transition-shadow cursor-pointer`}
-                      title={`Lugar ${lugar.numero} - ${lugar.estado}`}
-                    >
-                      {lugar.numero}
+                {/* Motos */}
+                <div>
+                  <h3 className="font-semibold mb-3 flex items-center gap-2">
+                    <ParkingSquare className="w-4 h-4" />
+                    Motos ({lugares.filter(l => l.tipo === 'moto').length} lugares)
+                  </h3>
+                  {lugares.filter(l => l.tipo === 'moto').length > 0 ? (
+                    <div className="grid grid-cols-7 sm:grid-cols-7 md:grid-cols-14 gap-2">
+                      {lugares
+                        .filter(l => l.tipo === 'moto')
+                        .sort((a, b) => a.numero - b.numero)
+                        .map(lugar => (
+                          <div
+                            key={lugar.id}
+                            className={`aspect-square rounded-lg ${getEstadoColor(lugar.estado)} flex items-center justify-center text-white font-bold text-xs shadow-sm hover:shadow-md transition-shadow cursor-pointer`}
+                            title={`Lugar ${lugar.numero} - ${lugar.estado}`}
+                          >
+                            {lugar.numero}
+                          </div>
+                        ))}
                     </div>
-                  ))}
-              </div>
-            </div>
+                  ) : (
+                    <p className="text-sm text-muted-foreground">No hay lugares para motos configurados</p>
+                  )}
+                </div>
 
-            {/* Leyenda */}
-            <div className="flex flex-wrap gap-4 pt-4 border-t">
-              <div className="flex items-center gap-2">
-                <div className="w-4 h-4 rounded bg-success"></div>
-                <span className="text-sm">Disponible</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-4 h-4 rounded bg-destructive"></div>
-                <span className="text-sm">Ocupado</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-4 h-4 rounded bg-warning"></div>
-                <span className="text-sm">Reservado</span>
-              </div>
-            </div>
+                {/* Leyenda */}
+                <div className="flex flex-wrap gap-4 pt-4 border-t">
+                  <div className="flex items-center gap-2">
+                    <div className="w-4 h-4 rounded bg-success"></div>
+                    <span className="text-sm">Disponible</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-4 h-4 rounded bg-destructive"></div>
+                    <span className="text-sm">Ocupado</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-4 h-4 rounded bg-warning"></div>
+                    <span className="text-sm">Reservado</span>
+                  </div>
+                </div>
+              </>
+            )}
           </CardContent>
         </Card>
       </main>
