@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Navbar } from '@/components/Navbar';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/integrations/supabase/client';
 import { DollarSign, Users, TrendingUp, Download } from 'lucide-react';
 import { toast } from 'sonner';
 import { format, startOfDay, endOfDay } from 'date-fns';
