@@ -110,37 +110,37 @@ export default function Tarifas() {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      <main className="container mx-auto p-6 space-y-6">
-        <div className="flex items-center justify-between">
+      <main className="container mx-auto p-4 sm:p-6 space-y-4 sm:space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
           <div>
-            <h1 className="text-4xl font-bold">Gestión de Tarifas</h1>
-            <p className="text-muted-foreground mt-1">
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold">Gestión de Tarifas</h1>
+            <p className="text-sm sm:text-base text-muted-foreground mt-1">
               Configura los precios y fracciones para cada tipo de vehículo
             </p>
           </div>
-          <Badge variant="outline" className="text-lg px-4 py-2">
-            <DollarSign className="w-4 h-4 mr-2" />
+          <Badge variant="outline" className="text-sm sm:text-base lg:text-lg px-3 py-1.5 sm:px-4 sm:py-2 shrink-0 w-fit">
+            <DollarSign className="w-3 h-3 sm:w-4 sm:h-4 mr-2" />
             Tarifario
           </Badge>
         </div>
 
         {/* Tarifas por Vehículo */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {tarifas.map((tarifa) => (
             <Card key={tarifa.id} className="border-l-4 border-l-primary">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
+              <CardHeader className="px-4 py-4 sm:px-6">
+                <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
                   {getTipoIcon(tarifa.tipo_vehiculo)}
                   <span className="capitalize">{tarifa.tipo_vehiculo}</span>
                 </CardTitle>
-                <CardDescription>
+                <CardDescription className="text-xs sm:text-sm">
                   {tarifa.es_por_turno 
                     ? `Tarifa por turno de ${tarifa.duracion_turno_horas || 8} horas`
                     : `Tarifa por hora con fracciones de ${tarifa.fraccion_minutos} minutos`
                   }
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="space-y-3 sm:space-y-4 px-4 pb-4 sm:px-6">
                 <div className="space-y-2">
                   <Label htmlFor={`precio-${tarifa.id}`}>
                     {tarifa.es_por_turno ? 'Precio por Turno' : 'Precio por Hora'}
@@ -229,17 +229,17 @@ export default function Tarifas() {
         {/* Información de Turnos */}
         {turnos.length > 0 && (
           <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Clock className="w-5 h-5" />
+            <CardHeader className="px-4 py-4 sm:px-6">
+              <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+                <Clock className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" />
                 Turnos Configurados
               </CardTitle>
-              <CardDescription>
+              <CardDescription className="text-xs sm:text-sm">
                 Turnos aplicables para el cálculo de tarifas de motos
               </CardDescription>
             </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <CardContent className="px-4 pb-4 sm:px-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
                 {turnos.map((turno) => (
                   <div 
                     key={turno.id}
@@ -263,12 +263,12 @@ export default function Tarifas() {
 
         {/* Información Adicional */}
         <Card className="border-blue-500/50 bg-blue-500/5">
-          <CardHeader>
-            <CardTitle className="text-blue-600 dark:text-blue-400">
+          <CardHeader className="px-4 py-4 sm:px-6">
+            <CardTitle className="text-blue-600 dark:text-blue-400 text-base sm:text-lg">
               ℹ️ Información Importante
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-2 text-sm">
+          <CardContent className="space-y-2 text-xs sm:text-sm px-4 pb-4 sm:px-6">
             <p>
               <strong>Autos y Camionetas:</strong> Se cobra por hora, con fracciones configurables. 
               Por ejemplo, si configuraste fracciones de 30 minutos, se cobrará cada media hora.

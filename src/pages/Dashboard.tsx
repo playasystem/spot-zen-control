@@ -145,25 +145,30 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      <main className="container mx-auto p-6 space-y-6">
-        <div className="flex items-center justify-between">
-          <h1 className="text-4xl font-bold">Dashboard</h1>
-          <Badge variant="outline" className="text-lg px-4 py-2">
-            {new Date().toLocaleDateString('es-AR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+      <main className="container mx-auto p-4 sm:p-6 space-y-4 sm:space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold">Dashboard</h1>
+          <Badge variant="outline" className="text-xs sm:text-sm lg:text-base px-3 py-1.5 sm:px-4 sm:py-2 w-fit">
+            {new Date().toLocaleDateString('es-AR', { 
+              weekday: window.innerWidth < 640 ? 'short' : 'long', 
+              year: 'numeric', 
+              month: window.innerWidth < 640 ? 'short' : 'long', 
+              day: 'numeric' 
+            })}
           </Badge>
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           <Card className="border-l-4 border-l-primary">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-                <Car className="w-4 h-4" />
+            <CardHeader className="pb-2 px-4 pt-4">
+              <CardTitle className="text-xs sm:text-sm font-medium text-muted-foreground flex items-center gap-2">
+                <Car className="w-3 h-3 sm:w-4 sm:h-4" />
                 Autos Disponibles
               </CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold text-primary">
+            <CardContent className="px-4 pb-4">
+              <div className="text-2xl sm:text-3xl font-bold text-primary">
                 {stats.lugaresDisponiblesAutos}/{stats.lugaresDisponiblesAutos + stats.lugaresOcupadosAutos}
               </div>
               <p className="text-xs text-muted-foreground mt-1">
@@ -173,14 +178,14 @@ export default function Dashboard() {
           </Card>
 
           <Card className="border-l-4 border-l-success">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-                <ParkingSquare className="w-4 h-4" />
+            <CardHeader className="pb-2 px-4 pt-4">
+              <CardTitle className="text-xs sm:text-sm font-medium text-muted-foreground flex items-center gap-2">
+                <ParkingSquare className="w-3 h-3 sm:w-4 sm:h-4" />
                 Motos Disponibles
               </CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold text-success">
+            <CardContent className="px-4 pb-4">
+              <div className="text-2xl sm:text-3xl font-bold text-success">
                 {stats.lugaresDisponiblesMotos}/{stats.lugaresDisponiblesMotos + stats.lugaresOcupadosMotos}
               </div>
               <p className="text-xs text-muted-foreground mt-1">
@@ -190,14 +195,14 @@ export default function Dashboard() {
           </Card>
 
           <Card className="border-l-4 border-l-accent">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-                <Users className="w-4 h-4" />
+            <CardHeader className="pb-2 px-4 pt-4">
+              <CardTitle className="text-xs sm:text-sm font-medium text-muted-foreground flex items-center gap-2">
+                <Users className="w-3 h-3 sm:w-4 sm:h-4" />
                 Clientes Activos
               </CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold text-accent">
+            <CardContent className="px-4 pb-4">
+              <div className="text-2xl sm:text-3xl font-bold text-accent">
                 {stats.totalClientes}
               </div>
               <p className="text-xs text-muted-foreground mt-1">
@@ -207,14 +212,14 @@ export default function Dashboard() {
           </Card>
 
           <Card className="border-l-4 border-l-warning">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-                <DollarSign className="w-4 h-4" />
+            <CardHeader className="pb-2 px-4 pt-4">
+              <CardTitle className="text-xs sm:text-sm font-medium text-muted-foreground flex items-center gap-2">
+                <DollarSign className="w-3 h-3 sm:w-4 sm:h-4" />
                 Ingresos Hoy
               </CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold text-warning">
+            <CardContent className="px-4 pb-4">
+              <div className="text-2xl sm:text-3xl font-bold text-warning">
                 ${stats.ingresosHoy.toFixed(0)}
               </div>
               <p className="text-xs text-muted-foreground mt-1">
@@ -259,19 +264,19 @@ export default function Dashboard() {
               <>
                 {/* Autos */}
                 <div>
-                  <h3 className="font-semibold mb-3 flex items-center gap-2">
-                    <Car className="w-4 h-4" />
+                  <h3 className="font-semibold mb-3 flex items-center gap-2 text-sm sm:text-base">
+                    <Car className="w-4 h-4 shrink-0" />
                     Autos ({lugares.filter(l => l.tipo === 'auto').length} lugares)
                   </h3>
                   {lugares.filter(l => l.tipo === 'auto').length > 0 ? (
-                    <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-12 gap-2">
+                    <div className="grid grid-cols-6 sm:grid-cols-8 md:grid-cols-12 gap-1.5 sm:gap-2">
                       {lugares
                         .filter(l => l.tipo === 'auto')
                         .sort((a, b) => a.numero - b.numero)
                         .map(lugar => (
                           <div
                             key={lugar.id}
-                            className={`aspect-square rounded-lg ${getEstadoColor(lugar.estado)} flex items-center justify-center text-white font-bold text-sm shadow-sm hover:shadow-md transition-shadow cursor-pointer`}
+                            className={`aspect-square rounded-md sm:rounded-lg ${getEstadoColor(lugar.estado)} flex items-center justify-center text-white font-bold text-xs sm:text-sm shadow-sm active:scale-95 transition-all cursor-pointer touch-manipulation`}
                             title={`Lugar ${lugar.numero} - ${lugar.estado}`}
                           >
                             {lugar.numero}
@@ -285,19 +290,19 @@ export default function Dashboard() {
 
                 {/* Motos */}
                 <div>
-                  <h3 className="font-semibold mb-3 flex items-center gap-2">
-                    <ParkingSquare className="w-4 h-4" />
+                  <h3 className="font-semibold mb-3 flex items-center gap-2 text-sm sm:text-base">
+                    <ParkingSquare className="w-4 h-4 shrink-0" />
                     Motos ({lugares.filter(l => l.tipo === 'moto').length} lugares)
                   </h3>
                   {lugares.filter(l => l.tipo === 'moto').length > 0 ? (
-                    <div className="grid grid-cols-7 sm:grid-cols-7 md:grid-cols-14 gap-2">
+                    <div className="grid grid-cols-7 sm:grid-cols-10 md:grid-cols-14 gap-1.5 sm:gap-2">
                       {lugares
                         .filter(l => l.tipo === 'moto')
                         .sort((a, b) => a.numero - b.numero)
                         .map(lugar => (
                           <div
                             key={lugar.id}
-                            className={`aspect-square rounded-lg ${getEstadoColor(lugar.estado)} flex items-center justify-center text-white font-bold text-xs shadow-sm hover:shadow-md transition-shadow cursor-pointer`}
+                            className={`aspect-square rounded-md sm:rounded-lg ${getEstadoColor(lugar.estado)} flex items-center justify-center text-white font-bold text-[10px] sm:text-xs shadow-sm active:scale-95 transition-all cursor-pointer touch-manipulation`}
                             title={`Lugar ${lugar.numero} - ${lugar.estado}`}
                           >
                             {lugar.numero}
@@ -310,18 +315,18 @@ export default function Dashboard() {
                 </div>
 
                 {/* Leyenda */}
-                <div className="flex flex-wrap gap-4 pt-4 border-t">
+                <div className="flex flex-wrap gap-3 sm:gap-4 pt-4 border-t">
                   <div className="flex items-center gap-2">
-                    <div className="w-4 h-4 rounded bg-success"></div>
-                    <span className="text-sm">Disponible</span>
+                    <div className="w-3 h-3 sm:w-4 sm:h-4 rounded bg-success shrink-0"></div>
+                    <span className="text-xs sm:text-sm">Disponible</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <div className="w-4 h-4 rounded bg-destructive"></div>
-                    <span className="text-sm">Ocupado</span>
+                    <div className="w-3 h-3 sm:w-4 sm:h-4 rounded bg-destructive shrink-0"></div>
+                    <span className="text-xs sm:text-sm">Ocupado</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <div className="w-4 h-4 rounded bg-warning"></div>
-                    <span className="text-sm">Reservado</span>
+                    <div className="w-3 h-3 sm:w-4 sm:h-4 rounded bg-warning shrink-0"></div>
+                    <span className="text-xs sm:text-sm">Reservado</span>
                   </div>
                 </div>
               </>

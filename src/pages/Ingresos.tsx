@@ -289,27 +289,92 @@ export default function Ingresos() {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      <main className="container mx-auto p-6 space-y-6">
-        <div className="flex items-center justify-between">
-          <h1 className="text-4xl font-bold">Entrada y Salida</h1>
+      <main className="container mx-auto p-4 sm:p-6 space-y-4 sm:space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold">Entrada y Salida</h1>
           <div className="flex gap-2">
-            <Button onClick={() => setDialogType('entrada')} className="gap-2">
+            <Button onClick={() => setDialogType('entrada')} className="gap-2 w-full sm:w-auto" size="sm">
               <LogIn className="w-4 h-4" />
-              Registrar Entrada
+              <span className="hidden xs:inline">Registrar</span> Entrada
             </Button>
           </div>
         </div>
 
         {/* Vehículos activos */}
         <Card className="border-l-4 border-l-success">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Clock className="w-5 h-5" />
+          <CardHeader className="px-4 py-4 sm:px-6">
+            <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+              <Clock className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" />
               Vehículos Activos ({ingresosActivos.length})
             </CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="overflow-x-auto">
+          <CardContent className="px-2 sm:px-6 pb-4">
+            {/* Vista móvil - Cards */}
+            <div className="block md:hidden space-y-3">
+              {ingresosActivos.length === 0 ? (
+                <div className="text-center text-muted-foreground py-8 text-sm">
+                  No hay vehículos activos
+                </div>
+              ) : (
+                ingresosActivos.map((ingreso) => {
+                  const minutos = differenceInMinutes(new Date(), new Date(ingreso.hora_entrada));
+                  const horas = Math.floor(minutos / 60);
+                  const mins = minutos % 60;
+                  
+                  return (
+                    <Card key={ingreso.id} className="border">
+                      <CardContent className="p-4">
+                        <div className="flex items-start justify-between mb-3">
+                          <div className="flex-1">
+                            <p className="font-mono font-bold text-lg mb-1">
+                              {ingreso.vehiculos?.patente}
+                            </p>
+                            <div className="flex flex-wrap gap-2">
+                              <Badge variant="outline" className="text-xs">
+                                {ingreso.vehiculos?.tipo}
+                              </Badge>
+                              <Badge variant={ingreso.tipo_cliente === 'mensual' ? 'default' : 'secondary'} className="text-xs">
+                                {ingreso.tipo_cliente === 'mensual' ? 'Mensual' : 'Por Hora'}
+                              </Badge>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="grid grid-cols-3 gap-2 text-sm mb-3">
+                          <div>
+                            <p className="text-muted-foreground text-xs">Lugar</p>
+                            <p className="font-medium">{ingreso.lugares?.numero}</p>
+                          </div>
+                          <div>
+                            <p className="text-muted-foreground text-xs">Entrada</p>
+                            <p className="font-medium">
+                              {format(new Date(ingreso.hora_entrada), 'HH:mm', { locale: es })}
+                            </p>
+                          </div>
+                          <div>
+                            <p className="text-muted-foreground text-xs">Tiempo</p>
+                            <p className="font-medium">{horas}h {mins}m</p>
+                          </div>
+                        </div>
+                        <Button
+                          size="sm"
+                          onClick={() => {
+                            setSelectedIngreso(ingreso);
+                            setDialogType('salida');
+                          }}
+                          className="w-full gap-2"
+                        >
+                          <LogOut className="w-4 h-4" />
+                          Registrar Salida
+                        </Button>
+                      </CardContent>
+                    </Card>
+                  );
+                })
+              )}
+            </div>
+
+            {/* Vista desktop - Tabla */}
+            <div className="hidden md:block overflow-x-auto">
               <Table>
                 <TableHeader>
                   <TableRow>
@@ -446,11 +511,11 @@ export default function Ingresos() {
 
         {/* Dialog Entrada */}
         <Dialog open={dialogType === 'entrada'} onOpenChange={(open) => !open && setDialogType(null)}>
-          <DialogContent>
+          <DialogContent className="max-w-[95vw] sm:max-w-md max-h-[90vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>Registrar Entrada</DialogTitle>
+              <DialogTitle className="text-lg sm:text-xl">Registrar Entrada</DialogTitle>
             </DialogHeader>
-            <form onSubmit={handleEntrada} className="space-y-4">
+            <form onSubmit={handleEntrada} className="space-y-3 sm:space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="patente">Patente *</Label>
                 <Input
@@ -519,13 +584,13 @@ export default function Ingresos() {
 
         {/* Dialog Salida */}
         <Dialog open={dialogType === 'salida'} onOpenChange={(open) => !open && setDialogType(null)}>
-          <DialogContent>
+          <DialogContent className="max-w-[95vw] sm:max-w-md max-h-[90vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>Registrar Salida</DialogTitle>
+              <DialogTitle className="text-lg sm:text-xl">Registrar Salida</DialogTitle>
             </DialogHeader>
             {selectedIngreso && (
-              <div className="space-y-4">
-                <div className="grid grid-cols-2 gap-4 p-4 bg-muted rounded-lg">
+              <div className="space-y-3 sm:space-y-4">
+                <div className="grid grid-cols-2 gap-3 sm:gap-4 p-3 sm:p-4 bg-muted rounded-lg text-sm sm:text-base">
                   <div>
                     <p className="text-sm text-muted-foreground">Patente</p>
                     <p className="font-mono font-bold text-lg">{selectedIngreso.vehiculos?.patente}</p>
