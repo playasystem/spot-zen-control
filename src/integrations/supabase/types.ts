@@ -180,22 +180,58 @@ export type Database = {
       }
       tarifas: {
         Row: {
+          duracion_turno_horas: number | null
+          es_por_turno: boolean | null
           fraccion_minutos: number | null
           id: string
           precio_hora: number
           tipo_vehiculo: Database["public"]["Enums"]["tipo_vehiculo"]
         }
         Insert: {
+          duracion_turno_horas?: number | null
+          es_por_turno?: boolean | null
           fraccion_minutos?: number | null
           id?: string
           precio_hora: number
           tipo_vehiculo: Database["public"]["Enums"]["tipo_vehiculo"]
         }
         Update: {
+          duracion_turno_horas?: number | null
+          es_por_turno?: boolean | null
           fraccion_minutos?: number | null
           id?: string
           precio_hora?: number
           tipo_vehiculo?: Database["public"]["Enums"]["tipo_vehiculo"]
+        }
+        Relationships: []
+      }
+      turnos: {
+        Row: {
+          activo: boolean | null
+          created_at: string | null
+          hora_fin: string
+          hora_inicio: string
+          id: string
+          nombre: string
+          orden: number
+        }
+        Insert: {
+          activo?: boolean | null
+          created_at?: string | null
+          hora_fin: string
+          hora_inicio: string
+          id?: string
+          nombre: string
+          orden: number
+        }
+        Update: {
+          activo?: boolean | null
+          created_at?: string | null
+          hora_fin?: string
+          hora_inicio?: string
+          id?: string
+          nombre?: string
+          orden?: number
         }
         Relationships: []
       }

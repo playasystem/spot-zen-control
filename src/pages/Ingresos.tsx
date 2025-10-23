@@ -49,6 +49,16 @@ interface Tarifa {
   tipo_vehiculo: 'auto' | 'moto' | 'camioneta';
   precio_hora: number;
   fraccion_minutos: number;
+  es_por_turno: boolean | null;
+  duracion_turno_horas: number | null;
+}
+
+interface Turno {
+  id: string;
+  nombre: string;
+  hora_inicio: string;
+  hora_fin: string;
+  orden: number;
 }
 
 export default function Ingresos() {
@@ -103,11 +113,42 @@ export default function Ingresos() {
     }
   };
 
+  const getTurnoActual = (fecha: Date): string => {
+    const hora = fecha.getHours();
+    
+    // Turno Mañana: 6am - 14pm (6-13)
+    if (hora >= 6 && hora < 14) return 'Mañana';
+    // Turno Tarde: 14pm - 22pm (14-21)
+    if (hora >= 14 && hora < 22) return 'Tarde';
+    // Turno Noche: 22pm - 6am (22-23, 0-5)
+    return 'Noche';
+  };
+
   const calcularMonto = (horaEntrada: string, horaSalida: string, tipoVehiculo: string) => {
     const tarifa = tarifas.find(t => t.tipo_vehiculo === tipoVehiculo);
     if (!tarifa) return 0;
 
-    const minutos = differenceInMinutes(new Date(horaSalida), new Date(horaEntrada));
+    const fechaEntrada = new Date(horaEntrada);
+    const fechaSalida = new Date(horaSalida);
+    const minutos = differenceInMinutes(fechaSalida, fechaEntrada);
+
+    // Para motos: cobrar por turno
+    if (tipoVehiculo === 'moto' && tarifa.es_por_turno) {
+      const turnoEntrada = getTurnoActual(fechaEntrada);
+      const turnoSalida = getTurnoActual(fechaSalida);
+      
+      // Si es el mismo día y mismo turno: 1 turno
+      if (fechaEntrada.toDateString() === fechaSalida.toDateString() && turnoEntrada === turnoSalida) {
+        return tarifa.precio_hora; // precio_hora contiene el precio del turno ($1000)
+      }
+      
+      // Si cambió de turno, calcular cuántos turnos pasaron
+      const horas = minutos / 60;
+      const turnosCompletos = Math.ceil(horas / (tarifa.duracion_turno_horas || 8));
+      return turnosCompletos * tarifa.precio_hora;
+    }
+
+    // Para autos y camionetas: cobrar por hora con fracciones
     const fracciones = Math.ceil(minutos / tarifa.fraccion_minutos);
     const horas = fracciones * (tarifa.fraccion_minutos / 60);
     return horas * tarifa.precio_hora;
@@ -430,11 +471,29 @@ export default function Ingresos() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="auto">Auto</SelectItem>
-                    <SelectItem value="camioneta">Camioneta</SelectItem>
-                    <SelectItem value="moto">Moto</SelectItem>
+                    <SelectItem value="auto">
+                      Auto - $2,000/hora (cada 30 min)
+                    </SelectItem>
+                    <SelectItem value="camioneta">
+                      Camioneta - $2,400/hora (cada 30 min)
+                    </SelectItem>
+                    <SelectItem value="moto">
+                      Moto - $1,000/turno (8 horas)
+                    </SelectItem>
                   </SelectContent>
                 </Select>
+              </div>
+              {/* Info de tarifas */}
+              <div className="p-3 bg-muted/50 rounded-lg text-sm">
+                <p className="font-semibold mb-1">Tarifas:</p>
+                <ul className="space-y-1 text-muted-foreground">
+                  <li>• Auto: $2,000/hora (se cobra cada 30 minutos)</li>
+                  <li>• Camioneta: $2,400/hora (se cobra cada 30 minutos)</li>
+                  <li>• Moto: $1,000 por turno de 8 horas</li>
+                </ul>
+                <p className="mt-2 text-xs">
+                  <strong>Turnos de motos:</strong> 6-14hs / 14-22hs / 22-6hs
+                </p>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="tipoCliente">Tipo de Cliente *</Label>
@@ -473,12 +532,12 @@ export default function Ingresos() {
                   </div>
                   <div>
                     <p className="text-sm text-muted-foreground">Tipo</p>
-                    <p className="font-medium">{selectedIngreso.vehiculos?.tipo}</p>
+                    <p className="font-medium capitalize">{selectedIngreso.vehiculos?.tipo}</p>
                   </div>
                   <div>
                     <p className="text-sm text-muted-foreground">Entrada</p>
                     <p className="font-medium">
-                      {format(new Date(selectedIngreso.hora_entrada), 'HH:mm', { locale: es })}
+                      {format(new Date(selectedIngreso.hora_entrada), 'dd/MM HH:mm', { locale: es })}
                     </p>
                   </div>
                   <div>
@@ -492,6 +551,18 @@ export default function Ingresos() {
                       })()}
                     </p>
                   </div>
+                  {selectedIngreso.vehiculos?.tipo === 'moto' && (
+                    <>
+                      <div>
+                        <p className="text-sm text-muted-foreground">Turno Entrada</p>
+                        <p className="font-medium">{getTurnoActual(new Date(selectedIngreso.hora_entrada))}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-muted-foreground">Turno Actual</p>
+                        <p className="font-medium">{getTurnoActual(new Date())}</p>
+                      </div>
+                    </>
+                  )}
                 </div>
                 {selectedIngreso.tipo_cliente === 'por_hora' && (
                   <div className="p-4 bg-primary/10 rounded-lg">
@@ -503,6 +574,22 @@ export default function Ingresos() {
                         selectedIngreso.vehiculos?.tipo || 'auto'
                       ).toFixed(0)}
                     </p>
+                    {selectedIngreso.vehiculos?.tipo === 'moto' && (
+                      <p className="text-xs text-muted-foreground mt-2">
+                        Tarifa por turno de 8 horas
+                      </p>
+                    )}
+                    {selectedIngreso.vehiculos?.tipo !== 'moto' && (
+                      <p className="text-xs text-muted-foreground mt-2">
+                        Tarifa: ${selectedIngreso.vehiculos?.tipo === 'camioneta' ? '2,400' : '2,000'}/hora (fracciones de 30 min)
+                      </p>
+                    )}
+                  </div>
+                )}
+                {selectedIngreso.tipo_cliente === 'mensual' && (
+                  <div className="p-4 bg-success/10 rounded-lg">
+                    <p className="text-sm text-success font-medium">Cliente Mensual</p>
+                    <p className="text-xs text-muted-foreground mt-1">Sin cargo adicional</p>
                   </div>
                 )}
                 <Button onClick={handleSalida} className="w-full" size="lg">

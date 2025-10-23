@@ -1,7 +1,7 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
-import { ParkingSquare, LayoutDashboard, Users, Car, FileText, LogOut } from 'lucide-react';
+import { ParkingSquare, LayoutDashboard, Users, Car, FileText, DollarSign, LogOut } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export function Navbar() {
@@ -12,6 +12,7 @@ export function Navbar() {
     { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { href: '/clientes', label: 'Clientes', icon: Users },
     { href: '/ingresos', label: 'Entrada/Salida', icon: Car },
+    { href: '/tarifas', label: 'Tarifas', icon: DollarSign },
     { href: '/reportes', label: 'Reportes', icon: FileText },
   ];
 
